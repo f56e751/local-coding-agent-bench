@@ -1,119 +1,119 @@
-# Local Qwen3-Coder vs Claude Sonnet — Benchmark Study
+# 로컬 Qwen3-Coder vs Claude Sonnet — 벤치마크 연구
 
-A 4-day empirical study (2026-04-24 ~ 2026-04-27) testing whether the **leaked Claude Code harness** ("Claw") closes the performance gap between a local **Qwen3-Coder-30B-A3B-Instruct** and **Claude Sonnet 4.6** on real coding-agent benchmarks.
+**유출된 Claude Code 하네스("Claw")**를 로컬 **Qwen3-Coder-30B-A3B-Instruct**에 씌우면 **Claude Sonnet 4.6**과의 성능 격차가 메워질까? 4일간(2026-04-24 ~ 04-27) 실측한 연구.
 
-**Hardware**: single RTX 4090 (24GB) · i9-11900K · 64GB RAM · Ubuntu 20.04.
-**Full report (Korean)**: 📄 [REPORT.md](./REPORT.md) — 495 lines, 10 measurements, full trajectory analysis.
+**하드웨어**: RTX 4090 24GB · i9-11900K · 64GB RAM · Ubuntu 20.04
+**상세 리포트**: 📄 [REPORT.md](./REPORT.md) — 495줄, 10개 측정, 전체 trajectory 분석
 
 ---
 
-## TL;DR — the story in 5 minutes
+## TL;DR — 5분 요약
 
-### 1. Baseline: how does the model perform natively?
+### 1. 베이스라인: 모델은 native 환경에서 얼마나 잘하나?
 
-Qwen3-Coder-30B-A3B-Instruct was published with a **50.0% pass@1** on SWE-bench Verified (Qwen team's official measurement, using the **OpenHands** scaffold at 500 turns — the harness Qwen was trained alongside).
+Qwen3-Coder-30B-A3B-Instruct는 SWE-bench Verified에서 **50.0% pass@1**로 공식 발표됨 (Qwen 팀이 OpenHands 스캐폴드 + 500턴으로 측정 — Qwen이 같이 학습한 하네스).
 
-That's our "vanilla" reference: **Qwen running in its native habitat**.
+이게 우리의 "vanilla 기준선" — **Qwen이 자기 native 환경에서 돌 때**의 진짜 실력.
 
-### 2. Hypothesis
+### 2. 가설
 
-> *"If we put the leaked Claude Code harness on top of Qwen, performance should jump significantly — possibly approaching Sonnet 4.6's 79.6% — because the harness does most of the heavy lifting in agentic coding."*
+> *"유출된 Claude Code 하네스를 Qwen에 씌우면 성능이 큰 폭 상승할 것 — 어쩌면 Sonnet 4.6의 79.6%에 근접할지도. 에이전틱 코딩에서 정말 무거운 일은 하네스가 하는 거니까."*
 
-This was the popular intuition after the late-March 2026 npm-source-map leak that exposed Anthropic's full Claude Code TypeScript codebase (~512K lines): "*the engine isn't the moat; the harness is*". We wanted to put that hypothesis under direct measurement.
+2026년 3월 말 npm 소스맵 유출로 Anthropic의 Claude Code 전체 TypeScript 코드(~512K줄)가 공개된 직후 커뮤니티에 퍼진 직관: **"엔진(모델)이 아니라 하네스가 진짜 moat다"**. 이걸 직접 측정으로 검증.
 
-### 3. Benchmarks we used
+### 3. 사용한 벤치마크
 
-Two benchmarks with deliberately different complexity profiles:
+복잡도가 의도적으로 다른 두 벤치마크를 골랐음:
 
-#### Aider Polyglot — small/medium scale
-- 225 Exercism programming exercises across 6 languages (we used the Python subset: 34 tasks for the Aider-native run, 15 of those re-run via Claw for direct comparison)
-- Each task is a **single-file algorithm/data-structure problem, 100–300 lines**
-- Aider's scaffold uses the simplest possible edit format ("output the entire file")
-- Good for measuring **raw coding capability + instruction following**
+#### Aider Polyglot — 작은/중간 규모
+- 6개 언어로 된 Exercism 코딩 과제 225개 (Python 서브셋만 사용: Aider-native 측정 34개, Claw 비교용 15개)
+- 각 task는 **단일 파일 알고리즘/자료구조 문제, 100~300줄**
+- Aider 자체 스캐폴드는 가장 단순한 편집 형식 사용 ("파일 전체를 다시 출력")
+- **순수 코딩 능력 + 명령 수행** 측정에 적합
 
-#### SWE-bench Verified — large/realistic scale
-- 500 real GitHub issues from major Python projects (`astropy`, `django`, `sympy`, `scikit-learn`, …) — we ran the first 10 astropy instances
-- Each task involves a **codebase of thousands of lines**, multi-file changes possible
-- Solution is a `git diff` patch that must apply cleanly and pass the hidden test suite (graded inside Docker by the official `swebench.harness.run_evaluation`)
-- Industry gold standard for coding-agent capability
-- Standard scaffold = `mini-swe-agent` (the same one Anthropic uses to publish their numbers)
+#### SWE-bench Verified — 크고 현실적인 규모
+- 주요 Python 프로젝트(`astropy`, `django`, `sympy`, `scikit-learn` 등)의 실제 GitHub issue 500개 — 우리는 첫 10개 astropy 인스턴스 사용
+- 각 task는 **수천~수만 줄 codebase**, 멀티파일 변경 잠재
+- 정답은 깨끗하게 적용되고 hidden test suite를 통과하는 `git diff` 패치 (Docker 안에서 공식 `swebench.harness.run_evaluation`으로 자동 채점)
+- **코딩 에이전트 업계 표준 벤치마크**
+- 표준 측정 스캐폴드 = `mini-swe-agent` (Anthropic이 자기 점수 발표할 때 쓰는 그 도구)
 
-### 4. Results
+### 4. 결과
 
-| Setup | Benchmark | Pass | Source |
+| 셋업 | 벤치마크 | Pass | 출처 |
 |---|---|---|---|
-| **Qwen3-Coder vanilla** (OpenHands, *Qwen-native*) | SWE-bench Verified | **50.0%** | Qwen official (HF discussion) |
-| Qwen3-Coder + Aider whole format | Aider polyglot Python (34) | 26.5% | ours |
-| **Qwen3-Coder + Claw harness** (Claude Code leak) | Aider polyglot Python (15) | **53.3%** ⬆️ +20pp | ours |
-| Qwen3-Coder + mini-swe-agent | SWE-bench Verified (10) | 10.0% | ours |
-| **Qwen3-Coder + Claw harness** (Claude Code leak) | SWE-bench Verified (10) | **0%** ❌ | ours |
-| **Sonnet 4.6 + mini-swe-agent** (Anthropic *co-trained*) | SWE-bench Verified | **79.6%** | Anthropic system card |
+| **Qwen3-Coder vanilla** (OpenHands, *Qwen-native*) | SWE-bench Verified | **50.0%** | Qwen 공식 (HF discussion) |
+| Qwen3-Coder + Aider whole format | Aider polyglot Python (34) | 26.5% | 우리 측정 |
+| **Qwen3-Coder + Claw 하네스** (Claude Code 유출본) | Aider polyglot Python (15) | **53.3%** ⬆️ +20pp | 우리 측정 |
+| Qwen3-Coder + mini-swe-agent | SWE-bench Verified (10) | 10.0% | 우리 측정 |
+| **Qwen3-Coder + Claw 하네스** (Claude Code 유출본) | SWE-bench Verified (10) | **0%** ❌ | 우리 측정 |
+| **Sonnet 4.6 + mini-swe-agent** (Anthropic, *co-training*) | SWE-bench Verified | **79.6%** | Anthropic system card |
 
-### 5. Hypothesis verdict — partially true, dramatically false
+### 5. 가설 평가 — 부분 사실, 부분 극적 거짓
 
-**Small tasks ✅ — hypothesis holds**
-- Same model, same tasks, only the scaffold changed: Aider 26.5% → Claw **53.3%** (+20 pp, ×1.6)
-- Strong evidence that the harness *can* lift outside-model performance.
+**작은 task ✅ — 가설 성립**
+- 같은 모델, 같은 task, 스캐폴드만 변경: Aider 26.5% → Claw **53.3%** (+20pp, ×1.6배)
+- 하네스가 외부 모델 성능을 끌어올릴 수 있다는 강한 증거.
 
-**Large tasks ❌ — hypothesis collapses**
-- Qwen with its native OpenHands harness: 50% on SWE-bench
-- Qwen with Claude's leaked harness (Claw): **0%** (10/10 empty patches)
-- The Claw harness didn't just fail to close the gap — it **lost ~50 percentage points** vs the native scaffold.
+**큰 task ❌ — 가설 붕괴**
+- Qwen + 자기 native OpenHands: SWE-bench 50%
+- Qwen + Claude의 유출 하네스 (Claw): **0%** (10/10 빈 patch)
+- Claw 하네스가 격차 메우긴커녕 native 스캐폴드 대비 **약 50%p 깎아먹음**.
 
-### 6. Why?
+### 6. 왜?
 
-Claude Code's `edit_file` tool (used inside Claw) requires **exact substring matching**: `old_string` must appear *byte-for-byte* in the target file (whitespace and indentation included). Sonnet/Opus were trained on millions of these tool-call sequences during RLHF; the convention is baked into their weights.
+Claude Code의 `edit_file` 도구(Claw 안에서 사용)는 **정확한 substring 매칭**을 요구함: `old_string`이 대상 파일에 *바이트 단위로 일치*해야 함 (whitespace, indentation 한 글자도 안 어긋남). Sonnet/Opus는 RLHF 단계에서 이런 도구 호출 시퀀스를 **수백만 회** 학습 — 컨벤션이 가중치에 박혀 있음.
 
-Qwen3-Coder was trained with **different tool-call grammars** (Qwen-Agent / OpenHands / Hermes-style). When fed Claude's `edit_file`:
+Qwen3-Coder는 **다른 도구 호출 grammar**(Qwen-Agent / OpenHands / Hermes-style)로 학습됨. Claude의 `edit_file`을 받았을 때:
 
-- **On small files** (Aider polyglot, ~150 lines): Qwen still keeps the entire file in active context, generates correct `old_string`, edits succeed → 53% pass.
-- **On large files** (SWE-bench astropy `connect.py` ~800 lines, multi-turn exploration): once auto-compaction triggers, Qwen loses precise file content. Subsequent `edit_file` calls degenerate to no-ops with `old_string == new_string`, patches come out empty → 0% pass.
+- **작은 파일** (Aider polyglot, ~150줄)에선: Qwen이 파일 전체를 active 컨텍스트에 유지 → 정확한 `old_string` 생성 → edit 성공 → 53% pass.
+- **큰 파일** (SWE-bench astropy `connect.py` ~800줄, 멀티턴 탐색)에선: auto-compaction 한 번 발동하면 Qwen이 파일의 정확한 내용을 잃어버림 → 그 다음 `edit_file` 호출이 `old_string == new_string` 같은 무효 인자로 변질 → patch가 빈 채로 나옴 → **0% pass**.
 
-We verified this directly by inspecting trajectory traces — every "successful edit" Claw reported on SWE-bench was a no-op. Bumping context from 64K → 160K (via a custom-built `llama-server` with the CUDA toolchain installed through conda) made **zero difference**. Context wasn't the bottleneck. (We also tried 256K with MoE-expert offload to CPU RAM, but inference dropped to 3.7 tok/s, making any benchmark impractical.)
+trajectory 직접 분석으로 검증함 — Claw가 SWE-bench에서 "edit 성공"으로 보고한 것 모두 사실은 no-op이었음. 컨텍스트를 64K → 160K로 늘려도 (conda로 CUDA toolchain 설치해서 자가 빌드한 `llama-server`로) **결과 동일**. 컨텍스트가 병목이 아니었음. (256K도 시도했지만 MoE expert를 CPU RAM에 오프로드해야 해서 추론 속도가 3.7 tok/s로 떨어져 측정 자체 불가.)
 
-### 7. One-line conclusion
+### 7. 한 줄 결론
 
-> **"Slap the leaked Claude Code harness on Qwen and you're Sonnet"** is a myth. Anthropic's real edge on SWE-bench isn't the harness in isolation — it's *co-training* the model and the harness together. That coupling doesn't transfer when you bolt the harness onto an outside model. The harness gives a meaningful boost on small/well-bounded tasks but breaks on large ones precisely because it expects a training-distribution match that Qwen doesn't have.
+> **"유출된 Claude Code 하네스 Qwen에 씌우면 Sonnet 된다"는 환상.** Anthropic의 진짜 SWE-bench 경쟁력은 하네스 단독이 아니라 **모델과 하네스를 같이 학습시킨(co-training) 효과**. 그 결합은 외부 모델에 하네스만 옮겨 끼울 때 따라오지 않음. 하네스는 작고 잘 정의된 task에선 의미 있는 부스트를 주지만, 큰 task에선 학습 분포 매칭 부재가 노출돼 오히려 깎임.
 
-See [REPORT.md](./REPORT.md) for full trajectory analysis, the 256K-context experiment timeline, and counter-experiments we ran (different KV quantizations, half-vs-full MoE offload, etc.).
+전체 trajectory 분석, 256K-컨텍스트 실험 타임라인, 추가 대조 실험(다른 KV 양자화, half vs full MoE 오프로드 등)은 [REPORT.md](./REPORT.md) 참고.
 
 ---
 
-## Repo layout
+## Repo 구조
 
 ```
 .
-├── REPORT.md                     # 495-line full study (Korean)
-├── README.md                     # this file
-├── benchmark/                    # Custom benchmark code + results
-│   ├── runner.py                 # Custom 4-task driver (T1-T4)
-│   ├── claw_polyglot.py          # Driver: Aider polyglot tasks via Claw Code
-│   ├── claw_swebench.py          # Driver: SWE-bench Verified via Claw Code
-│   ├── tasks/                    # Custom 4-task definitions
-│   └── results/                  # All custom + Aider-polyglot-via-Claw runs
-├── swebench-results/             # SWE-bench Verified runs (preds.json, trajectories, patches)
+├── REPORT.md                     # 495줄 본 연구 보고서 (한국어)
+├── README.md                     # 이 파일
+├── benchmark/                    # 자작 벤치마크 코드 + 결과
+│   ├── runner.py                 # 자작 4-task 실행기 (T1-T4)
+│   ├── claw_polyglot.py          # Aider polyglot task를 Claw로 돌리는 driver
+│   ├── claw_swebench.py          # SWE-bench Verified를 Claw로 돌리는 driver
+│   ├── tasks/                    # 자작 4-task 정의
+│   └── results/                  # 자작 + Aider-via-Claw 모든 실행 결과
+├── swebench-results/             # SWE-bench Verified 실행 (preds.json, trajectory, patch)
 │   ├── b-10task/                 # mini-swe-agent + Qwen   → 1/10 (10%)
 │   ├── claw-10task/              # Claw 64K + Qwen         → 0/10
 │   └── claw-10task-160k/         # Claw 160K + Qwen        → 0/10
-├── logs/                         # swebench harness Docker eval logs
-├── claw-env.sh                   # Shell env for Claw Code (Ollama routing + wrapper)
-├── mini-swe-config.yaml          # mini-swe-agent → Ollama routing
-├── Modelfile.qwen3coder-agent    # Ollama Modelfile (64K context)
-├── Modelfile.qwen3coder-128k     # Ollama Modelfile (128K context)
-└── SETUP.md                      # How to reproduce the environment
+├── logs/                         # swebench harness Docker 채점 로그
+├── claw-env.sh                   # Claw Code용 환경변수 + wrapper 함수
+├── mini-swe-config.yaml          # mini-swe-agent → Ollama 라우팅 설정
+├── Modelfile.qwen3coder-agent    # Ollama Modelfile (64K 컨텍스트)
+├── Modelfile.qwen3coder-128k     # Ollama Modelfile (128K 컨텍스트)
+└── SETUP.md                      # 환경 재현 가이드
 ```
 
-## Reproducing
+## 재현 방법
 
-External dependencies (cloned but **not** vendored — re-fetch via [SETUP.md](./SETUP.md)):
+외부 의존성들 (clone하지만 vendoring은 안 함 — [SETUP.md](./SETUP.md) 참고해서 재설치):
 
-- [`instructkr/claw-code`](https://github.com/instructkr/claw-code) — Rust clean-room reimpl of the leaked Claude Code harness
+- [`instructkr/claw-code`](https://github.com/instructkr/claw-code) — Claude Code 유출 하네스의 Rust clean-room 재구현
 - [`Aider-AI/aider`](https://github.com/Aider-AI/aider) + [`Aider-AI/polyglot-benchmark`](https://github.com/Aider-AI/polyglot-benchmark)
 - [`SWE-agent/mini-swe-agent`](https://github.com/SWE-agent/mini-swe-agent) v2.2.8
 - [`SWE-bench/SWE-bench`](https://github.com/SWE-bench/SWE-bench) v4.1.0
-- [`ggml-org/llama.cpp`](https://github.com/ggml-org/llama.cpp) (built from source for the 256K-context experiment)
-- Ollama 0.21.2 serving Qwen3-Coder-30B-A3B-Instruct (Q4_K_M GGUF)
+- [`ggml-org/llama.cpp`](https://github.com/ggml-org/llama.cpp) (256K 컨텍스트 실험용 자가 빌드)
+- Ollama 0.21.2 + Qwen3-Coder-30B-A3B-Instruct (Q4_K_M GGUF)
 
-## License
+## 라이선스
 
-MIT (see [LICENSE](./LICENSE)). Measurements / results are CC-BY-4.0 — please cite if reused.
+MIT (코드/문서 — [LICENSE](./LICENSE) 참고). 측정 결과/데이터는 CC-BY-4.0 — 재사용 시 인용 부탁드립니다.
