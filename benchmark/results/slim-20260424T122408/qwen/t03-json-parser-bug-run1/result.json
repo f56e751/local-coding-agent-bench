@@ -1,0 +1,30 @@
+{
+  "pass": true,
+  "passed": 19,
+  "failed": 0,
+  "errored": 0,
+  "total": 19,
+  "grading_walltime_seconds": 0.13,
+  "pytest_exit_code": 0,
+  "per_test": {
+    "tests/test_parser.py::TestExistingBehaviors::test_null": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_true_false": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_integer": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_float": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_simple_string": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_array_of_ints": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_empty_array": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_empty_object": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_object_with_string_value": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_nested_structures": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_trailing_garbage_rejected": "PASSED",
+    "tests/test_parser.py::TestExistingBehaviors::test_whitespace_tolerance": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_escaped_quote_inside_string": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_escaped_backslash": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_escaped_newline_and_tab": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_escaped_forward_slash": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_escaped_carriage_return": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_escapes_inside_object_key": "PASSED",
+    "tests/test_parser.py::TestEscapeSequences::test_roundtrip_against_stdlib_json": "PASSED"
+  }
+}

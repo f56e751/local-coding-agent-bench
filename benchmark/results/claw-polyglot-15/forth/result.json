@@ -1,0 +1,14 @@
+{
+  "task": "forth",
+  "try1_claw_seconds": 600.1,
+  "try1_claw_timed_out": true,
+  "try1_pytest_seconds": 0.15,
+  "try1_pass": false,
+  "try2_ran": true,
+  "try2_claw_seconds": 600.01,
+  "try2_claw_timed_out": true,
+  "try2_pytest_seconds": 0.17,
+  "try2_pass": false,
+  "pass_1": false,
+  "pass_2": false
+}

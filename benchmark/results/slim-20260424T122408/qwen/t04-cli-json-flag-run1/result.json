@@ -1,0 +1,20 @@
+{
+  "pass": true,
+  "passed": 9,
+  "failed": 0,
+  "errored": 0,
+  "total": 9,
+  "grading_walltime_seconds": 0.28,
+  "pytest_exit_code": 0,
+  "per_test": {
+    "tests/test_cli.py::test_text_default": "PASSED",
+    "tests/test_cli.py::test_text_explicit": "PASSED",
+    "tests/test_cli.py::test_stdin_text": "PASSED",
+    "tests/test_cli.py::test_json_space_separated": "PASSED",
+    "tests/test_cli.py::test_json_equals_form": "PASSED",
+    "tests/test_cli.py::test_json_stdin": "PASSED",
+    "tests/test_cli.py::test_invalid_format_rejected": "PASSED",
+    "tests/test_cli.py::test_json_empty_file": "PASSED",
+    "tests/test_cli.py::test_json_output_is_single_line": "PASSED"
+  }
+}

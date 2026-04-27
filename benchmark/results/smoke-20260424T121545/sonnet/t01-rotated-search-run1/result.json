@@ -1,0 +1,31 @@
+{
+  "pass": true,
+  "passed": 20,
+  "failed": 0,
+  "errored": 0,
+  "total": 20,
+  "grading_walltime_seconds": 0.13,
+  "pytest_exit_code": 0,
+  "per_test": {
+    "tests/test_solution.py::test_found_in_rotated": "PASSED",
+    "tests/test_solution.py::test_not_found_in_rotated": "PASSED",
+    "tests/test_solution.py::test_unrotated_found": "PASSED",
+    "tests/test_solution.py::test_unrotated_not_found": "PASSED",
+    "tests/test_solution.py::test_target_at_pivot": "PASSED",
+    "tests/test_solution.py::test_target_just_before_pivot": "PASSED",
+    "tests/test_solution.py::test_target_first_element": "PASSED",
+    "tests/test_solution.py::test_target_last_element": "PASSED",
+    "tests/test_solution.py::test_negatives_mixed": "PASSED",
+    "tests/test_solution.py::test_all_negatives_rotated": "PASSED",
+    "tests/test_solution.py::test_empty_array": "PASSED",
+    "tests/test_solution.py::test_single_element_found": "PASSED",
+    "tests/test_solution.py::test_single_element_not_found": "PASSED",
+    "tests/test_solution.py::test_two_elements_rotated_found_first": "PASSED",
+    "tests/test_solution.py::test_two_elements_rotated_found_second": "PASSED",
+    "tests/test_solution.py::test_two_elements_unrotated_found": "PASSED",
+    "tests/test_solution.py::test_full_rotation_equivalent": "PASSED",
+    "tests/test_solution.py::test_rotation_at_every_possible_pivot": "PASSED",
+    "tests/test_solution.py::test_large_array_returns_correct_index": "PASSED",
+    "tests/test_solution.py::test_access_count_is_logarithmic": "PASSED"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "task": "grep",
+  "try1_claw_seconds": 23.23,
+  "try1_claw_timed_out": false,
+  "try1_pytest_seconds": 0.18,
+  "try1_pass": true,
+  "try2_ran": false,
+  "pass_1": true,
+  "pass_2": true
+}

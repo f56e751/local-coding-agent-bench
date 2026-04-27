@@ -1,0 +1,10 @@
+{
+  "task": "grade-school",
+  "try1_claw_seconds": 600.01,
+  "try1_claw_timed_out": true,
+  "try1_pytest_seconds": 0.17,
+  "try1_pass": true,
+  "try2_ran": false,
+  "pass_1": true,
+  "pass_2": true
+}

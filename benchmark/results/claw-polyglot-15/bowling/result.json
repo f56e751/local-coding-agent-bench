@@ -1,0 +1,14 @@
+{
+  "task": "bowling",
+  "try1_claw_seconds": 140.58,
+  "try1_claw_timed_out": false,
+  "try1_pytest_seconds": 0.13,
+  "try1_pass": false,
+  "try2_ran": true,
+  "try2_claw_seconds": 293.46,
+  "try2_claw_timed_out": false,
+  "try2_pytest_seconds": 0.15,
+  "try2_pass": false,
+  "pass_1": false,
+  "pass_2": false
+}

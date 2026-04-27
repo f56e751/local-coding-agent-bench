@@ -1,0 +1,31 @@
+{
+  "pass": false,
+  "passed": 19,
+  "failed": 1,
+  "errored": 0,
+  "total": 20,
+  "grading_walltime_seconds": 0.14,
+  "pytest_exit_code": 1,
+  "per_test": {
+    "tests/test_solution.py::test_empty": "PASSED",
+    "tests/test_solution.py::test_single": "PASSED",
+    "tests/test_solution.py::test_already_sorted_no_overlap": "PASSED",
+    "tests/test_solution.py::test_simple_overlap": "PASSED",
+    "tests/test_solution.py::test_classic_leetcode_example": "PASSED",
+    "tests/test_solution.py::test_unsorted_input": "PASSED",
+    "tests/test_solution.py::test_fully_nested": "PASSED",
+    "tests/test_solution.py::test_chain_of_overlaps": "PASSED",
+    "tests/test_solution.py::test_touching_not_overlapping_half_open": "PASSED",
+    "tests/test_solution.py::test_duplicates": "PASSED",
+    "tests/test_solution.py::test_empty_interval_dropped": "PASSED",
+    "tests/test_solution.py::test_all_empty_intervals": "PASSED",
+    "tests/test_solution.py::test_empty_interval_inside_larger_is_dropped": "PASSED",
+    "tests/test_solution.py::test_negative_values": "PASSED",
+    "tests/test_solution.py::test_single_point_at_boundary": "PASSED",
+    "tests/test_solution.py::test_large_chain_merges_to_one": "PASSED",
+    "tests/test_solution.py::test_random_stress_equivalent_to_naive": "FAILED",
+    "tests/test_solution.py::test_returned_type_is_list_of_tuples_or_list_of_lists": "PASSED",
+    "tests/test_solution.py::test_output_sorted_by_start": "PASSED",
+    "tests/test_solution.py::test_does_not_mutate_input": "PASSED"
+  }
+}

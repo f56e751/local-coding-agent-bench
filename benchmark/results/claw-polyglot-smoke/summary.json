@@ -1,0 +1,27 @@
+{
+  "model": "openai/qwen3-coder-agent:latest",
+  "scaffold": "claw-code",
+  "num_tasks": 1,
+  "pass_rate_1": 0.0,
+  "pass_rate_2": 0.0,
+  "pass_num_1": 0,
+  "pass_num_2": 0,
+  "total_wall_seconds": 231.5,
+  "seconds_per_task": 231.5,
+  "rows": [
+    {
+      "task": "bowling",
+      "try1_claw_seconds": 109.44,
+      "try1_claw_timed_out": false,
+      "try1_pytest_seconds": 0.14,
+      "try1_pass": false,
+      "try2_ran": true,
+      "try2_claw_seconds": 121.83,
+      "try2_claw_timed_out": false,
+      "try2_pytest_seconds": 0.14,
+      "try2_pass": false,
+      "pass_1": false,
+      "pass_2": false
+    }
+  ]
+}

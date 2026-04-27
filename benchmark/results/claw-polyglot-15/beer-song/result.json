@@ -1,0 +1,14 @@
+{
+  "task": "beer-song",
+  "try1_claw_seconds": 1.9,
+  "try1_claw_timed_out": false,
+  "try1_pytest_seconds": 0.12,
+  "try1_pass": false,
+  "try2_ran": true,
+  "try2_claw_seconds": 93.22,
+  "try2_claw_timed_out": false,
+  "try2_pytest_seconds": 0.12,
+  "try2_pass": true,
+  "pass_1": false,
+  "pass_2": true
+}

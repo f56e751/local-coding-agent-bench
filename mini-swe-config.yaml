@@ -1,0 +1,20 @@
+# Override of default mini-swe-agent SWE-bench config to route to local Ollama.
+# Inherits from the default swebench.yaml (system_template, instance_template, environment_class: docker).
+
+model:
+  model_name: "openai/qwen3-coder-agent:latest"
+  # litellm doesn't have cost data for Ollama models — silently ignore
+  cost_tracking: "ignore_errors"
+  model_kwargs:
+    api_base: "http://127.0.0.1:11434/v1"
+    api_key: "ollama-local"
+    drop_params: true
+    temperature: 0.0
+    # Qwen3-Coder via Ollama: avoid parallel tool calls (less reliable than Anthropic native)
+    parallel_tool_calls: false
+
+agent:
+  # Tighter than default 250 — keeps wall time reasonable on a single 4090
+  step_limit: 100
+  # Disable cost limit (local inference is free)
+  cost_limit: 0

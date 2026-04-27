@@ -1,0 +1,9 @@
+{
+  "instance_id": "astropy__astropy-13398",
+  "model_patch": "",
+  "claw_seconds": 900.05,
+  "claw_timed_out": true,
+  "claw_exit_code": 124,
+  "patch_size": 0,
+  "total_seconds": 900.23
+}

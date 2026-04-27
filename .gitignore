@@ -1,0 +1,61 @@
+# --- External repos / clones (re-fetch with setup script) ---
+claw-code/
+aider/
+llama.cpp/
+llamacpp/
+
+# --- Python virtual environments ---
+*-venv/
+mini-swe-venv/
+swebench-venv/
+ktrans-venv/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Conda env (~/miniconda is outside repo, but just in case) ---
+miniconda/
+miniconda3/
+
+# --- Build artifacts ---
+build/
+target/
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# --- Server / runtime logs (re-generated) ---
+llama-server-logs/
+*.log
+
+# --- Claw session state captured during runs (per-task .claw/ dirs) ---
+**/.claw/
+.claw.json
+
+# --- Pytest / Python build artifacts inside benchmark workspaces ---
+**/.cache/
+**/.pytest_cache/
+
+# --- Large model files ---
+*.gguf
+*.safetensors
+*.bin
+
+# --- Temporary / scratch ---
+/tmp/
+*.tmp
+*.swp
+.DS_Store
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+
+# --- Secrets / env (in case any added later) ---
+.env
+.env.*
+*.pem
+*.key

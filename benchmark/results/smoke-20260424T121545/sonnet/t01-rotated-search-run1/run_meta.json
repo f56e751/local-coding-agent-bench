@@ -1,0 +1,8 @@
+{
+  "model": "sonnet",
+  "walltime_seconds": 52.74,
+  "total_tokens": 18499,
+  "tool_uses": 9,
+  "exit_code": 0,
+  "timed_out": false
+}
