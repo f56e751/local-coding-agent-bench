@@ -69,6 +69,29 @@ Qwen3-Coder-30B-A3B-Instruct는 SWE-bench Verified에서 **50.0% pass@1**로 공
 | **Qwen3-Coder + Claw 하네스** (Claude Code 유출본) | SWE-bench Verified (10) | **0%** ❌ | 우리 측정 |
 | **Sonnet 4.6 + mini-swe-agent** (Anthropic, *co-training*) | SWE-bench Verified | **79.6%** | Anthropic system card |
 
+### 4-1. ⚠️ 측정 비대칭 (caveat)
+
+위 결과 표에는 두 종류가 섞여 있음:
+
+| 출처 | 측정 환경 | 비고 |
+|---|---|---|
+| **Qwen vanilla 50%** | Qwen 팀 공식 (OpenHands, 500턴, **500개 풀세트**, 자체 클러스터) | 우리가 직접 재현 안 함 — **공개 발표값 인용** |
+| **Sonnet 4.6 79.6%** | Anthropic 공식 (mini-swe-agent, system card) | 직접 재현 안 함 — **공개 발표값 인용** |
+| **Qwen + mini-swe-agent 10%** | 우리 측정 (mini-swe-agent, 100턴, **10개 astropy만**, 4090 단일) | 직접 측정 |
+| **Qwen + Claw 0%** | 우리 측정 (Claw, timeout 900s, 10개 astropy, 4090 단일) | 직접 측정 |
+
+따라서 엄밀히 말하면 fair comparison이 아닌 부분이 있음:
+- 샘플 크기 (500 vs 10)
+- 턴 budget (500 vs 100)
+- task 분포 (6 프로젝트 mixed vs astropy 10개 한정)
+- 실행 환경 (제조사 클러스터 vs 우리 4090 한 대)
+
+**다만 우리 핵심 결론은 영향 안 받음**:
+- "Qwen + Claw가 SWE-bench에서 0%"는 우리 자체 측정 — 동일 10개 task에서 mini-swe-agent 10% vs Claw 0%로 직접 비교됨 (둘 다 우리가 같은 셋팅에서 돌림)
+- "Aider polyglot에서 Aider 26.5% → Claw 53.3% +20pp"도 같은 15 task에서 우리가 직접 측정한 비교
+
+**Qwen vanilla을 우리 환경에서 직접 재현하려면**: 같은 10개 astropy task를 OpenHands + Qwen으로 돌려야 함. 셋업 ~2시간 + 실행 ~5-10시간. 시간 제약으로 미수행. 후속 실험 후보.
+
 ### 5. 가설 평가 — 부분 사실, 부분 극적 거짓
 
 **작은 task ✅ — 가설 성립**
