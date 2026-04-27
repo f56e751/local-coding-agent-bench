@@ -11,6 +11,26 @@
 
 ### 1. 베이스라인: 모델은 native 환경에서 얼마나 잘하나?
 
+#### 측정 대상 모델 스펙 — Qwen3-Coder-30B-A3B-Instruct
+
+| 항목 | 값 |
+|---|---|
+| 아키텍처 | **MoE** (Mixture of Experts) |
+| 총 파라미터 | **30.5B** (전체 expert weights 합) |
+| 활성 파라미터 | **3.3B** (토큰당 router가 고른 expert만 계산 — `A3B` = Active 3B) |
+| 레이어 수 | 48 |
+| Attention | GQA (4 KV heads, head_dim 128) |
+| **컨텍스트 (native)** | **256K** (262,144 tokens) |
+| **컨텍스트 (YaRN 확장)** | **1M** (1,048,576 tokens) |
+| 우리가 사용한 양자화 | **Q4_K_M GGUF** (디스크 ~18GB) |
+| 우리가 사용한 컨텍스트 | 64K (대부분 측정), 160K (재시도 측정) |
+
+**왜 Q4_K_M + 64K로 시작했나**: 4090 24GB에서 Q4_K_M 가중치(~18GB) + KV 캐시(~3GB @ q8_0, 64K) + compute graph(~1GB) = **~22GB**로 안정 동작. 더 큰 컨텍스트(128K, 160K, 256K)도 시도했고 그 결과는 [REPORT.md §3.5](./REPORT.md)에 정리.
+
+**MoE의 의미**: 토큰당 활성 3B만 계산하니까 dense 30B보다 **3~5배 빠름** (4090에서 ~80 tok/s). 하지만 비활성 expert까지 모두 VRAM에 있어야 해서 메모리는 dense 30B와 비슷하게 먹음.
+
+#### 공개된 SWE-bench 점수
+
 Qwen3-Coder-30B-A3B-Instruct는 SWE-bench Verified에서 **50.0% pass@1**로 공식 발표됨 (Qwen 팀이 OpenHands 스캐폴드 + 500턴으로 측정 — Qwen이 같이 학습한 하네스).
 
 이게 우리의 "vanilla 기준선" — **Qwen이 자기 native 환경에서 돌 때**의 진짜 실력.
